@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | IN-HOUSE RECORDING STUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --red: #e8192c;
+            --cream: #f0ebe2;
+            --grey: #1a1a1a;
+            --mid: #2a2a2a;
+            --muted: #666;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--cream);
+            font-family: 'Barlow', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* GRAIN OVERLAY */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        .login-bg {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 50% 50%, rgba(232, 25, 44, 0.1) 0%, transparent 70%),
+                var(--black);
+            z-index: -1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            background: var(--grey);
+            border: 1px solid rgba(240, 235, 226, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .logo span {
+            color: var(--red);
+        }
+
+        h2 {
+            font-family: 'Barlow Condensed', sans-serif;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--red);
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            width: 100%;
+            background: var(--mid);
+            border: 1px solid rgba(240, 235, 226, 0.1);
+            padding: 1rem;
+            color: var(--cream);
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--red);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--red);
+            color: var(--white);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 1rem;
+            border: 2px solid var(--red);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--red);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(240, 235, 226, 0.6);
+        }
+
+        .toggle-link a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .toggle-link a:hover {
+            color: var(--red);
+        }
+
+        .error-msg {
+            background: rgba(232, 25, 44, 0.15);
+            border-left: 3px solid var(--red);
+            padding: 1rem;
+            font-size: 0.8rem;
+            color: var(--cream);
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: rgba(240, 235, 226, 0.4);
+            text-decoration: none;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s;
+        }
+
+        .back-home:hover {
+            color: var(--cream);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-bg"></div>
+    <a href="index.html" class="back-home">← Back to Home</a>
+
+    <div class="login-container">
+        <div class="logo">IN<span>—</span>HOUSE</div>
+        
+        <div id="login-form-container">
+            <h2>Login</h2>
+            <div id="login-error" class="error-msg"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-primary" id="login-btn">Log In</button>
+            </form>
+            <div class="toggle-link">
+                Don't have an account? <a href="#" id="show-signup">Sign Up</a>
+            </div>
+        </div>
+
+        <div id="signup-form-container" style="display: none;">
+            <h2>Create Account</h2>
+            <div id="signup-error" class="error-msg"></div>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <button type="submit" class="btn-primary" id="signup-btn">Sign Up</button>
+            </form>
+            <div class="toggle-link">
+                Already have an account? <a href="#" id="show-login">Log In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://gxcpcoyjcwueffejxohc.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4Y3Bjb3lqY3d1ZWZmZWp4b2hjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTkxNjEsImV4cCI6MjA5Mjc3NTE2MX0.PEW_R902nQ8pduG5IlNtazOq3t-EszOsMwJ23k3FStQ";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const loginFormContainer = document.getElementById('login-form-container');
+        const signupFormContainer = document.getElementById('signup-form-container');
+        const showSignup = document.getElementById('show-signup');
+        const showLogin = document.getElementById('show-login');
+
+        showSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginFormContainer.style.display = 'none';
+            signupFormContainer.style.display = 'block';
+        });
+
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupFormContainer.style.display = 'none';
+            loginFormContainer.style.display = 'block';
+        });
+
+        // Handle Signup
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const name = document.getElementById('signup-name').value;
+            const signupBtn = document.getElementById('signup-btn');
+            const errorMsg = document.getElementById('signup-error');
+
+            signupBtn.disabled = true;
+            signupBtn.innerText = 'Creating Account...';
+            errorMsg.style.display = 'none';
+
+            const { data, error } = await _supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: name
+                    },
+                    emailRedirectTo: window.location.href
+                }
+            });
+
+            if (error) {
+                errorMsg.innerText = error.message;
+                errorMsg.style.display = 'block';
+                signupBtn.disabled = false;
+                signupBtn.innerText = 'Sign Up';
+            } else {
+                alert('Account created! Please check your email for confirmation (if required) or log in.');
+                signupFormContainer.style.display = 'none';
+                loginFormContainer.style.display = 'block';
+            }
+        });
+
+        // Handle Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const loginBtn = document.getElementById('login-btn');
+            const errorMsg = document.getElementById('login-error');
+
+            loginBtn.disabled = true;
+            loginBtn.innerText = 'Logging In...';
+            errorMsg.style.display = 'none';
+
+            const { data, error } = await _supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) {
+                errorMsg.innerText = error.message;
+                errorMsg.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.innerText = 'Log In';
+            } else {
+                // Check if user is redirecting from booking
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect');
+                if (redirect === 'booking') {
+                    window.location.href = 'index.html#booking';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

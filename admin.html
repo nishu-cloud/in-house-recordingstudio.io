@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — In-House Studio</title>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏠%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:,">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --red: #e8192c;
+      --green: #27ae60;
+      --orange: #e67e22;
+      --cream: #f0ebe2;
+      --grey: #1a1a1a;
+      --mid: #2a2a2a;
+      --muted: #666;
+      --white: #fff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* â”€â”€ LOGIN â”€â”€ */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 40%, rgba(232, 25, 44, 0.12) 0%, transparent 70%), var(--black);
+    }
+
+    .login-box {
+      background: var(--grey);
+      border: 1px solid var(--mid);
+      padding: 3rem;
+      width: 380px;
+      text-align: center;
+    }
+
+    .login-box h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+
+    .login-box h1 span {
+      color: var(--red);
+    }
+
+    .login-box p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .login-box input {
+      width: 100%;
+      background: var(--mid);
+      border: 1px solid #333;
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      padding: 12px 16px;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+
+    .login-box input:focus {
+      border-color: var(--red);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 14px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .login-btn:hover {
+      opacity: 0.85;
+    }
+
+    .login-err {
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 0.8rem;
+      display: none;
+    }
+
+    .login-back {
+      display: block;
+      margin-top: 1.2rem;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .login-back:hover {
+      color: var(--red);
+    }
+
+    /* â”€â”€ TOAST â”€â”€ */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 9999;
+      background: var(--grey);
+      border: 1px solid var(--mid);
+      border-left: 3px solid #27ae60;
+      padding: 1rem 1.4rem;
+      font-size: 13px;
+      color: var(--cream);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      max-width: 320px;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #toast.error {
+      border-left-color: var(--red);
+    }
+
+    /* â”€â”€ CONFIRM MODAL â”€â”€ */
+    #confirm-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 8888;
+      background: rgba(0, 0, 0, 0.75);
+      align-items: center;
+      justify-content: center;
+    }
+
+    #confirm-modal.open {
+      display: flex;
+    }
+
+    .confirm-box {
+      background: var(--grey);
+      border: 1px solid var(--mid);
+      border-top: 3px solid var(--red);
+      padding: 2rem;
+      width: 360px;
+      text-align: center;
+    }
+
+    .confirm-box p {
+      font-size: 14px;
+      color: var(--cream);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .confirm-box strong {
+      color: var(--red);
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .confirm-yes {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px 22px;
+      transition: opacity 0.2s;
+    }
+
+    .confirm-yes:hover {
+      opacity: 0.85;
+    }
+
+    .confirm-no {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--mid);
+      cursor: pointer;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px 22px;
+      transition: all 0.2s;
+    }
+
+    .confirm-no:hover {
+      border-color: var(--cream);
+      color: var(--cream);
+    }
+
+    .back-site-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--mid);
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .back-site-btn:hover {
+      border-color: var(--cream);
+      color: var(--cream);
+    }
+
+    /* â”€â”€ ADMIN PANEL â”€â”€ */
+    #admin-panel {
+      display: none;
+    }
+
+    header {
+      background: var(--grey);
+      border-bottom: 1px solid var(--mid);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.05em;
+    }
+
+    header .logo span {
+      color: var(--red);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .admin-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      background: rgba(232, 25, 44, 0.15);
+      border: 1px solid rgba(232, 25, 44, 0.4);
+      color: var(--red);
+    }
+
+    .logout-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--mid);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .admin-body {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Stats */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--grey);
+      border: 1px solid var(--mid);
+      padding: 1.5rem;
+      border-left: 3px solid var(--mid);
+    }
+
+    .stat-card.pending {
+      border-left-color: #e67e22;
+    }
+
+    .stat-card.confirmed {
+      border-left-color: #27ae60;
+    }
+
+    .stat-card.rejected {
+      border-left-color: var(--red);
+    }
+
+    .stat-card.total {
+      border-left-color: #3498db;
+    }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .stat-card.pending .stat-num {
+      color: #e67e22;
+    }
+
+    .stat-card.confirmed .stat-num {
+      color: #27ae60;
+    }
+
+    .stat-card.rejected .stat-num {
+      color: var(--red);
+    }
+
+    .stat-card.total .stat-num {
+      color: #3498db;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--mid);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .tab:hover:not(.active) {
+      border-color: var(--cream);
+      color: var(--cream);
+    }
+
+    /* Bookings list */
+    .bookings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .booking-card {
+      background: var(--grey);
+      border-left: 3px solid var(--mid);
+      padding: 1.5rem 2rem;
+      transition: background 0.2s;
+    }
+
+    .booking-card.status-pending {
+      border-left-color: #e67e22;
+    }
+
+    .booking-card.status-confirmed {
+      border-left-color: #27ae60;
+    }
+
+    .booking-card.status-rejected {
+      border-left-color: var(--red);
+    }
+
+    .booking-card.status-suggest {
+      border-left-color: #9b59b6;
+    }
+
+    .booking-card:hover {
+      background: var(--mid);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .card-info h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      background: var(--mid);
+      color: var(--muted);
+    }
+
+    .meta-tag.date {
+      background: rgba(232, 25, 44, 0.12);
+      color: var(--red);
+    }
+
+    .meta-tag.session {
+      background: rgba(52, 152, 219, 0.12);
+      color: #3498db;
+    }
+
+    .meta-tag.time {
+      background: rgba(155, 89, 182, 0.12);
+      color: #9b59b6;
+    }
+
+    .status-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-pending {
+      background: rgba(230, 126, 34, 0.15);
+      border: 1px solid #e67e22;
+      color: #e67e22;
+    }
+
+    .badge-confirmed {
+      background: rgba(39, 174, 96, 0.15);
+      border: 1px solid #27ae60;
+      color: #27ae60;
+    }
+
+    .badge-rejected {
+      background: rgba(232, 25, 44, 0.15);
+      border: 1px solid var(--red);
+      color: var(--red);
+    }
+
+    .badge-suggest {
+      background: rgba(155, 89, 182, 0.15);
+      border: 1px solid #9b59b6;
+      color: #9b59b6;
+    }
+
+    .card-message {
+      margin-top: 0.8rem;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      padding: 0.8rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 2px solid var(--mid);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .action-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px 18px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .action-btn:hover {
+      opacity: 0.82;
+    }
+
+    .btn-confirm {
+      background: #27ae60;
+      color: #fff;
+    }
+
+    .btn-reject {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-suggest {
+      background: #9b59b6;
+      color: #fff;
+    }
+
+    .suggest-input-row {
+      display: none;
+      width: 100%;
+      margin-top: 0.8rem;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .suggest-input-row.open {
+      display: flex;
+    }
+
+    .suggest-input-row input {
+      flex: 1;
+      background: var(--mid);
+      border: 1px solid #444;
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      padding: 9px 14px;
+      outline: none;
+    }
+
+    .suggest-input-row input:focus {
+      border-color: #9b59b6;
+    }
+
+    .send-suggest-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      background: #9b59b6;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    .action-status {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .refresh-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--mid);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: auto;
+    }
+
+    .refresh-btn:hover {
+      border-color: var(--cream);
+      color: var(--cream);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title-admin {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- REDIRECTING SCREEN -->
+  <div id="loading-screen"
+    style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--black);">
+    <div style="text-align:center;">
+      <div class="logo">IN<span>-</span>HOUSE</div>
+      <p style="font-size:12px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Verifying Admin
+        Access...</p>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="admin-panel">
+    <header>
+      <div class="logo">IN<span>-</span>HOUSE <span
+          style="font-size:14px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.1em;">
+          ADMIN</span></div>
+      <div class="header-right">
+        <span class="admin-badge">Live</span>
+        <a href="index.html" class="back-site-btn">Main Site</a>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="action-btn" style="background:var(--accent);color:white;margin-left:10px;"
+          onclick="testEmail()">Test Email Config</button>
+      </div>
+    </header>
+
+    <div class="admin-body">
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card total">
+          <div class="stat-num" id="stat-total">—</div>
+          <div class="stat-lbl">Total Bookings</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="stat-num" id="stat-pending">—</div>
+          <div class="stat-lbl">Pending</div>
+        </div>
+        <div class="stat-card confirmed">
+          <div class="stat-num" id="stat-confirmed">—</div>
+          <div class="stat-lbl">Confirmed</div>
+        </div>
+        <div class="stat-card rejected">
+          <div class="stat-num" id="stat-rejected">—</div>
+          <div class="stat-lbl">Rejected / Rescheduled</div>
+        </div>
+      </div>
+
+      <!-- Header + Tabs -->
+      <div class="section-header">
+        <div class="section-title-admin">Booking Requests</div>
+        <button class="refresh-btn" onclick="loadBookings()">↻ Refresh</button>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="tab active" onclick="filterTab('all',this)">All</button>
+        <button class="tab" onclick="filterTab('pending',this)">Pending</button>
+        <button class="tab" onclick="filterTab('confirmed',this)">Confirmed</button>
+        <button class="tab" onclick="filterTab('rejected',this)">Rejected</button>
+        <button class="tab" onclick="filterTab('suggest',this)">Rescheduled</button>
+      </div>
+
+      <div id="bookings-container">
+        <div class="loading">Loading bookings...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast"></div>
+
+  <!-- Confirm modal -->
+  <div id="confirm-modal">
+    <div class="confirm-box">
+      <p id="confirm-msg">Are you sure?</p>
+      <div class="confirm-actions">
+        <button class="confirm-yes" id="confirm-yes-btn">Yes, proceed</button>
+        <button class="confirm-no" onclick="closeConfirm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://gxcpcoyjcwueffejxohc.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4Y3Bjb3lqY3d1ZWZmZWp4b2hjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTkxNjEsImV4cCI6MjA5Mjc3NTE2MX0.PEW_R902nQ8pduG5IlNtazOq3t-EszOsMwJ23k3FStQ";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  </script>
+  <script>
+    // CONFIG
+    const ADMIN_PASSWORD = "Saicom1+1computer";
+
+    let allBookings = [];
+    let activeFilter = 'all';
+
+    // —— TOAST ——
+    function showToast(msg, isError) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'show' + (isError ? ' error' : '');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { t.className = ''; }, 4000);
+    }
+
+    // â”€â”€ CONFIRM MODAL â”€â”€
+    let _confirmCb = null;
+    function openConfirm(msg, cb) {
+      document.getElementById('confirm-msg').innerHTML = msg;
+      _confirmCb = cb;
+      document.getElementById('confirm-modal').classList.add('open');
+      document.getElementById('confirm-yes-btn').onclick = function () {
+        closeConfirm();
+        _confirmCb && _confirmCb();
+      };
+    }
+    function closeConfirm() {
+      document.getElementById('confirm-modal').classList.remove('open');
+    }
+    window.closeConfirm = closeConfirm;
+
+    // —— AUTH CHECK ——
+    async function checkAdmin() {
+      const { data: { session } } = await _supabase.auth.getSession();
+
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Admin verification logic
+      // By default, we use admin@inhouse.com. You can change this or add roles to metadata.
+      const isAdmin = session.user.email === 'yawalenachiket@gmail.com' || session.user.user_metadata.role === 'admin';
+
+      if (isAdmin) {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        loadBookings();
+      } else {
+        alert('Access Denied: Admin privileges required.');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Run check on load
+    checkAdmin();
+
+    async function logout() {
+      await _supabase.auth.signOut();
+      window.location.href = 'index.html';
+    }
+    window.logout = logout;
+    window.login = () => { }; // Legacy
+
+    // â”€â”€ LOAD BOOKINGS â”€â”€
+    async function loadBookings() {
+      document.getElementById('bookings-container').innerHTML = '<div class="loading">Loading bookings...</div>';
+      try {
+        const { data, error } = await _supabase
+          .from('bookings')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allBookings = data;
+        updateStats();
+        renderBookings(activeFilter);
+      } catch (err) {
+        document.getElementById('bookings-container').innerHTML =
+          `<div class="empty-state"><div class="icon">âš ï¸</div><p>Error loading bookings. Check Supabase config and table permissions.</p></div>`;
+      }
+    }
+    window.loadBookings = loadBookings;
+
+    function updateStats() {
+      document.getElementById('stat-total').textContent = allBookings.length;
+      document.getElementById('stat-pending').textContent = allBookings.filter(b => b.status === 'pending').length;
+      document.getElementById('stat-confirmed').textContent = allBookings.filter(b => b.status === 'confirmed').length;
+      document.getElementById('stat-rejected').textContent = allBookings.filter(b => b.status === 'rejected' || b.status === 'suggest').length;
+    }
+
+    // â”€â”€ FILTER â”€â”€
+    function filterTab(filter, btn) {
+      activeFilter = filter;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      renderBookings(filter);
+    }
+    window.filterTab = filterTab;
+
+    // â”€â”€ RENDER â”€â”€
+    function renderBookings(filter) {
+      const list = filter === 'all' ? allBookings : allBookings.filter(b => b.status === filter);
+      const container = document.getElementById('bookings-container');
+
+      if (!list.length) {
+        container.innerHTML = `<div class="empty-state"><div class="icon">📥</div><p>No ${filter === 'all' ? '' : filter} bookings yet</p></div>`;
+        return;
+      }
+
+      container.innerHTML = `<div class="bookings-list">${list.map(b => bookingCard(b)).join('')}</div>`;
+    }
+
+    function bookingCard(b) {
+      const dateStr = b.created_at ? new Date(b.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+      const statusBadge = {
+        pending: '<span class="status-badge badge-pending">⏳ Pending</span>',
+        confirmed: '<span class="status-badge badge-confirmed">✅ Accepted</span>',
+        rejected: '<span class="status-badge badge-rejected">❌ Rejected</span>',
+        suggest: '<span class="status-badge badge-suggest">🔄 Rescheduled</span>',
+      }[b.status] || '';
+
+      const actions = b.status === 'pending' ? `
+      <div class="card-actions">
+        <button class="action-btn btn-confirm" onclick="confirmBooking('${b.id}','${escHtml(b.name)}','${escHtml(b.email)}','${escHtml(b.session)}','${escHtml(b.date)}','${escHtml(b.time)}')">✅ Accept</button>
+        <button class="action-btn btn-reject"  onclick="askReject('${b.id}','${escHtml(b.name)}','${escHtml(b.email)}')">❌ Reject</button>
+        <button class="action-btn btn-suggest" onclick="toggleSuggest('${b.id}')">🔄 Reschedule</button>
+        <span class="action-status" id="act-${b.id}"></span>
+      </div>
+      <div class="suggest-input-row" id="suggest-row-${b.id}">
+        <input type="text" id="suggest-val-${b.id}" placeholder="e.g. 15 May 2026, Evening (4PM–8PM)" />
+        <button class="send-suggest-btn" onclick="sendSuggest('${b.id}','${escHtml(b.name)}','${escHtml(b.email)}')">Send →</button>
+      </div>
+    ` : `<div class="card-actions"><span class="action-status">Action already taken on this booking.</span></div>`;
+
+      return `
+      <div class="booking-card status-${b.status}" id="card-${b.id}">
+        <div class="card-top">
+          <div class="card-info">
+            <h3>${escHtml(b.name)}</h3>
+            <div class="card-meta">
+              <span class="meta-tag">📧 ${escHtml(b.email)}</span>
+              <span class="meta-tag">📞 ${escHtml(b.phone)}</span>
+              <span class="meta-tag date">📅 ${escHtml(b.date)}</span>
+              <span class="meta-tag time">🕒 ${escHtml(b.time)}</span>
+              <span class="meta-tag session">🎙️ ${escHtml(b.session)}</span>
+              <span class="meta-tag">Submitted: ${dateStr}</span>
+              ${b.suggestedTime ? `<span class="meta-tag" style="border:1px solid #9b59b6;color:#9b59b6;">Suggested: ${escHtml(b.suggestedTime)}</span>` : ''}
+            </div>
+          </div>
+          ${statusBadge}
+        </div>
+        ${b.message ? `<div class="card-message">"${escHtml(b.message)}"</div>` : ''}
+        ${actions}
+      </div>`;
+    }
+
+    function escHtml(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // —— TOGGLE RESCHEDULE ROW ——
+    function toggleSuggest(id) {
+      const row = document.getElementById(`suggest-row-${id}`);
+      row.classList.toggle('open');
+    }
+    window.toggleSuggest = toggleSuggest;
+
+    // —— ASK REJECT (with confirm dialog) ——
+    function askReject(id, name, email) {
+      openConfirm(
+        `Reject booking for <strong>${escHtml(name)}</strong>?<br><small style="color:var(--muted);font-size:12px;">A rejection email will be sent to ${escHtml(email)}</small>`,
+        () => rejectBooking(id, name, email)
+      );
+    }
+    window.askReject = askReject;
+
+    // —— ACCEPT ——
+    async function confirmBooking(id, name, email, session, date, time) {
+      const actEl = document.getElementById(`act-${id}`);
+      actEl.textContent = 'Updating...';
+      try {
+        const subject = encodeURIComponent("Booking Confirmed — In-House Studio");
+        const body = encodeURIComponent(`Hello ${name},\n\nYour ${session} session is confirmed for ${date} at ${time}.\n\nWe look forward to recording you!\n\nBest,\nIn-House Studio`);
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        await _supabase.from('bookings').update({ status: 'confirmed' }).eq('id', id);
+        updateBookingInList(id, { status: 'confirmed' });
+        renderBookings(activeFilter);
+        updateStats();
+        showToast('✅ Booking status updated — Mail app opened.');
+      } catch (err) {
+        if (actEl) actEl.textContent = '❌ Failed';
+        showToast('❌ Failed to update status.', true);
+      }
+    }
+    window.confirmBooking = confirmBooking;
+
+    // —— REJECT ——
+    async function rejectBooking(id, name, email) {
+      const actEl = document.getElementById(`act-${id}`);
+      actEl.textContent = 'Updating...';
+      try {
+        const subject = encodeURIComponent("Booking Update — In-House Studio");
+        const body = encodeURIComponent(`Hello ${name},\n\nUnfortunately, we are unable to accommodate your booking request at this time as the slot is already filled.\n\nPlease feel free to request another time slot!\n\nBest,\nIn-House Studio`);
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        await _supabase.from('bookings').update({ status: 'rejected' }).eq('id', id);
+        updateBookingInList(id, { status: 'rejected' });
+        renderBookings(activeFilter);
+        updateStats();
+        showToast('Booking status updated — Mail app opened.', true);
+      } catch (err) {
+        if (actEl) actEl.textContent = '❌ Failed';
+        showToast('❌ Failed to update status.', true);
+      }
+    }
+    window.rejectBooking = rejectBooking;
+
+    // —— RESCHEDULE ——
+    async function sendSuggest(id, name, email) {
+      const suggestVal = document.getElementById(`suggest-val-${id}`).value.trim();
+      if (!suggestVal) { showToast('⚠️ Please enter a suggested time slot.', true); return; }
+      const actEl = document.getElementById(`act-${id}`);
+      actEl.textContent = 'Updating...';
+      try {
+        const subject = encodeURIComponent("Reschedule Suggestion — In-House Studio");
+        const body = encodeURIComponent(`Hello ${name},\n\nYour selected time slot overlaps with another session. We suggest: ${suggestVal}.\n\nPlease let us know if this works for you!\n\nBest,\nIn-House Studio`);
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+
+        await _supabase.from('bookings').update({ status: 'suggest', suggestedTime: suggestVal }).eq('id', id);
+        updateBookingInList(id, { status: 'suggest', suggestedTime: suggestVal });
+        renderBookings(activeFilter);
+        updateStats();
+        showToast('Reschedule suggestion sent — Mail app opened.');
+      } catch (err) {
+        if (actEl) actEl.textContent = '❌ Failed';
+        showToast('❌ Failed to update status.', true);
+      }
+    }
+    window.sendSuggest = sendSuggest;
+
+    function updateBookingInList(id, updates) {
+      const b = allBookings.find(x => x.id === id);
+      if (b) {
+        Object.assign(b, updates);
+      }
+    }
+    async function testEmail() {
+      const email = prompt("Enter your email to test:");
+      if (!email) return;
+      const subject = encodeURIComponent("Test Email — In-House Studio");
+      const body = encodeURIComponent("This is a test to verify your mailto configuration is working! 🎙️");
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+      showToast("✅ Mail app opened for testing.");
+    }
+  </script>
+
+</body>
+
+</html>
